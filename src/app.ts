@@ -3,6 +3,7 @@ import express, {
   type Request,
   type Response,
 } from "express";
+import { authRouter } from "./modules/auth/auth.route";
 
 const app: Application = express()
 
@@ -12,6 +13,8 @@ app.use(express.text());
 // app.use(cookieParser());
 
 
-// Register the user routes
+// Register the routes
+app.use("/api/auth", authRouter);
+
 
 export default app;

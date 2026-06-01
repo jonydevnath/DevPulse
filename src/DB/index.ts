@@ -10,8 +10,8 @@ export const initDB = async () => {
     await pool.query(`
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
-            name VARCHAR(20),
-            email VARCHAR(20) NOT NULL UNIQUE,
+            name VARCHAR(255),
+            email VARCHAR(255) NOT NULL UNIQUE,
             password TEXT NOT NULL,
             role VARCHAR(20) DEFAULT 'contributor' CHECK (role IN ('contributor', 'maintainer')),
             created_at TIMESTAMP NOT NULL DEFAULT NOW(),
