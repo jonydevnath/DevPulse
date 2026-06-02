@@ -8,7 +8,7 @@ const signupUser = async (req: Request, res: Response) => {
     const result = await authService.createUsrInDB(req.body);
 
     sendResponse(res, {
-      statusCode: 201,
+      statusCode: StatusCodes.CREATED,
       success: true,
       message: "User registered successfully",
       data: result.rows[0],
@@ -27,7 +27,8 @@ const loginUser = async (req: Request, res: Response) => {
   try {
     const result = await authService.loginUserInDB(req.body);
 
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
       success: true,
       message: "Login successful",
       data: result,
