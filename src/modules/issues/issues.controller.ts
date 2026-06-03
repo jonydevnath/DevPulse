@@ -50,21 +50,56 @@ const getSingleIssue = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
     const result = await issuesService.getSingleIssueFromDB(id as string);
-    
+
     if (!result) {
-      return sendResponse(res, { 
+      return sendResponse(res, {
         statusCode: StatusCodes.NOT_FOUND,
         success: false,
         message: "Issue Not Found!",
       });
     }
 
-    return sendResponse(res, { 
+    return sendResponse(res, {
       statusCode: StatusCodes.OK,
       success: true,
-      data: [result], 
+      data: [result],
     });
+  } catch (error: any) {
+    return sendResponse(res, {
+      statusCode: error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
+      success: false,
+      message: error.message,
+      errors: error.details || error.message,
+    });
+  }
+};
 
+const updateIssue = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const payload = req.body;
+  const loggedInUser = req.user;
+
+  try {
+    if (!loggedInUser) {
+      return sendResponse(res, {
+        statusCode: StatusCodes.UNAUTHORIZED,
+        success: false,
+        message: "Unauthorized Access!",
+      });
+    }
+
+    const result = await issuesService.updateIssueInDB(
+      payload,
+      id as string,
+      loggedInUser,
+    );
+
+    return sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Issue updated successfully",
+      data: result,
+    });
   } catch (error: any) {
     return sendResponse(res, {
       statusCode: error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
@@ -79,4 +114,5 @@ export const issuesController = {
   createIssue,
   getAllIssues,
   getSingleIssue,
+  updateIssue,
 };
