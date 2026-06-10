@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import sendResponse from "../../utils/sendRes";
 import { issuesService } from "./issues.service";
 import type { Request, Response } from "express";
+import { assert } from "node:console";
 
 const createIssue = async (req: Request, res: Response) => {
   try {
@@ -110,9 +111,38 @@ const updateIssue = async (req: Request, res: Response) => {
   }
 };
 
+const deleteIssue = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const result = await issuesService.deleteIssuesFromDB(id as string);
+
+    if (result.rows.length === 0) {
+      return sendResponse(res, {
+        statusCode: StatusCodes.NOT_FOUND,
+        success: false,
+        message: "Issue Not Found!",
+      });
+    }
+
+    return sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Issue deleted successfully",
+    });
+  } catch (error: any) {
+    return sendResponse(res, {
+      statusCode: error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
+      success: false,
+      message: error.message,
+      errors: error.details || error.message,
+    });
+  }
+};
+
 export const issuesController = {
   createIssue,
   getAllIssues,
   getSingleIssue,
   updateIssue,
+  deleteIssue,
 };
